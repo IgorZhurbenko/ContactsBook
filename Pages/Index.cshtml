@@ -1,0 +1,99 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<script src="~/js/Contacts.js"></script>
+<script src="~/js/vue.js"></script>
+<link rel="stylesheet" href="~/css/CustomStyles.css" />
+
+<div class="text-center">
+    <h1 class="display-4">Your own contacts book!</h1>
+    @*<p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>*@
+
+    <table id="list" class="table">
+        <thead>
+            <tr>
+                @foreach (var ContactHeader in DataManager.ContactMainFields.Except(new string[] { "id" }))
+                {
+                    <td>@ContactHeader.PutSpaces()</td>
+                }
+                <td></td>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var Contact in Model.Contacts)
+            {
+                <tr>
+                    @foreach (var ContactHeader in DataManager.ContactMainFields.Except(new string[] { "id" }))
+                    {
+                        <td>@Contact[ContactHeader]</td>
+                    }
+                <td>
+                    <button onclick="Edit(@Contact["id"], ContactInfo)">
+                        Edit
+                    </button>
+                    <button onclick="Delete(@Contact["id"])">
+                        Delete
+                    </button>
+                </td>
+                </tr>
+            }
+            <tr>
+                <td>
+                    <button onclick="CreateNew(ContactInfo)">Create</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <table class="table" hidden id="ContactInfo">
+        <thead>
+            <tr>
+                <td>
+                    <button onclick="Return()">
+                        Return
+                    </button>
+                </td>
+                <td>
+                    <button onclick="Save(ContactInfo)">
+                        Save
+                    </button>
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (string Field in DataManager.ContactShowableFields.Except(new string[] { "id" }))
+            {
+                <tr>
+                    <td>
+                        @Field.PutSpaces()
+                    </td>
+                    <td>
+                        <input @Html.Raw(Html.DefineInputAttributes(Field)) />
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <script>
+        var ContactInfo = new Vue({
+            el: '#ContactInfo',
+            data: {
+                       @Html.Raw(DataManager.ParameterStringToCreateVUE())
+            }
+        })
+
+    </script>
+    @*@foreach (string Field in DataManager.ContactShowableFields)
+        {
+            <script>
+                ContactInfo.@Field = 10;
+                </script>
+        }*@
+
+
+
+</div>
